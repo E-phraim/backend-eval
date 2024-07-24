@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/e-phraim/backend-eval/handlers"
+	"github.com/e-phraim/backend-eval/routes"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	engine := gin.Default()
+	r := gin.Default()
 
-	engine.GET("/movies", handlers.GetMovies)
+	routes.MovieRoutes(r)
 
-	engine.Run(":7000")
+	r.Run("localhost:8000")
 }

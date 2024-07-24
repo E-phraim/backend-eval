@@ -9,11 +9,15 @@ import (
 
 const csv = "./db/movies.csv"
 
-func  GetMovies(c *gin.Context){
+func GetMovies(c *gin.Context){
 	movies, err := utils.Reader(csv)
 	if err != nil{
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, movies)
+}
+
+func GetMovieByID(c *gin.Context){
+	
 }
