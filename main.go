@@ -10,5 +10,5 @@ func main() {
 
 	routes.MovieRoutes(r)
 
-	r.Run("localhost:8000")
+	r.Run("localhost:7100")
 }
