@@ -44,7 +44,7 @@ type UserReview struct {
 	MovieID         uuid.UUID `json:"movieId"`
 	Rating          float64   `json:"rating"`
 	Quote           string    `json:"quote"`
-	ReviewID        uuid.UUID `json:"reviewId"`
+	ReviewID        int       `json:"reviewId"`
 	IsVerified      bool      `json:"isVerified"`
 	IsSuperReviewer bool      `json:"isSuperReviewer"`
 	HasSpoilers     bool      `json:"hasSpoilers"`

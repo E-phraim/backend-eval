@@ -41,10 +41,10 @@ func MoviesReader(filepath string) ([]models.Movie, error) {
 	return movies, nil
 }
 
-func ParseBoolValue(value string) (bool, error){
+func ParseBoolValue(value string) (bool, error) {
 	value = strings.ToLower(value)
 
-	if value == ""{
+	if value == "" {
 		return false, nil
 	}
 
@@ -99,13 +99,13 @@ func CriticsReviewsReader(filepath string) ([]models.CriticReview, error) {
 
 		criticsReview = append(criticsReview, models.CriticReview{
 			// ReviewID:        uuid.MustParse(record[0]),
-			ReviewID:        reviewID,
-			MovieID:         uuid.MustParse(record[1]),
-			CreationDate:    record[3],
-			CriticName:      record[4],
-			CriticPageURL:   record[5],
-			ReviewState:     record[6],
-			IsFresh:         isFresh,
+			ReviewID:      reviewID,
+			MovieID:       uuid.MustParse(record[1]),
+			CreationDate:  record[3],
+			CriticName:    record[4],
+			CriticPageURL: record[5],
+			ReviewState:   record[6],
+			IsFresh:       isFresh,
 			// IsRotten:        isRotten,
 			// IsRTURL:         isRTURL,
 			// IsTopCritic:     isTopCritic,
@@ -136,19 +136,26 @@ func UserReviewsReader(filepath string) ([]models.UserReview, error) {
 
 	var reviews []models.UserReview
 	for _, record := range records[1:] {
+		// Parse the UUID for MovieID
 		movieID, err := uuid.Parse(record[0])
 		if err != nil {
 			return nil, err
 		}
 
+		// Parse the rating
 		rating, err := strconv.ParseFloat(record[1], 64)
 		if err != nil {
 			return nil, err
 		}
-		reviewID, err := uuid.Parse(record[3])
+
+		// Parse the ReviewID (index 3)
+		reviewID, err := strconv.Atoi(record[3])
 		if err != nil {
+			log.Printf("Error parsing reviewId: %v", err)
 			return nil, err
 		}
+
+		// Parse the boolean values
 		isVerified, err := strconv.ParseBool(record[4])
 		if err != nil {
 			return nil, err
@@ -165,28 +172,30 @@ func UserReviewsReader(filepath string) ([]models.UserReview, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		// Parse the score
 		score, err := strconv.ParseFloat(record[8], 64)
 		if err != nil {
 			return nil, err
 		}
 
+		// Create the UserReview struct and append it to the reviews slice
 		review := models.UserReview{
 			MovieID:         movieID,
 			Rating:          rating,
-			Quote:           record[2],
-			ReviewID:        reviewID,
+			Quote:           record[2], // Quote at index 2
+			ReviewID:        reviewID,  // Correct ReviewID index (3)
 			IsVerified:      isVerified,
 			IsSuperReviewer: isSuperReviewer,
 			HasSpoilers:     hasSpoilers,
 			HasProfanity:    hasProfanity,
 			Score:           score,
-			CreationDate:    record[9],
-			UserDisplayName: record[10],
-			UserRealm:       record[11],
-			UserID:          record[12],
+			CreationDate:    record[9],  // Creation date at index 9
+			UserDisplayName: record[10], // User display name at index 10
+			UserRealm:       record[11], // User realm at index 11
+			UserID:          record[12], // User ID at index 12
 		}
 		reviews = append(reviews, review)
-
 	}
 	return reviews, nil
 }
