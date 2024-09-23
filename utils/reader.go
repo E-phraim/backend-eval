@@ -137,44 +137,44 @@ func UserReviewsReader(filepath string) ([]models.UserReview, error) {
 	var reviews []models.UserReview
 	for _, record := range records[1:] {
 		// Parse the UUID for MovieID
-		movieID, err := uuid.Parse(record[0])
+		movieID, err := uuid.Parse(record[0]) // MovieID at index 0
 		if err != nil {
 			return nil, err
 		}
 
 		// Parse the rating
-		rating, err := strconv.ParseFloat(record[1], 64)
+		rating, err := strconv.ParseFloat(record[1], 64) // Rating at index 1
 		if err != nil {
 			return nil, err
 		}
 
-		// Parse the ReviewID (index 3)
-		reviewID, err := strconv.Atoi(record[3])
-		if err != nil {
-			log.Printf("Error parsing reviewId: %v", err)
-			return nil, err
+		// Keep ReviewID as a string, no need to convert to an integer
+		reviewID := record[3] // ReviewID at index 3
+		if reviewID == "" {
+			log.Printf("Skipping record with empty ReviewID") // Optional: decide whether to skip or process without ReviewID
+			continue
 		}
 
 		// Parse the boolean values
-		isVerified, err := strconv.ParseBool(record[4])
+		isVerified, err := strconv.ParseBool(record[4]) // IsVerified at index 4
 		if err != nil {
 			return nil, err
 		}
-		isSuperReviewer, err := strconv.ParseBool(record[5])
+		isSuperReviewer, err := strconv.ParseBool(record[5]) // IsSuperReviewer at index 5
 		if err != nil {
 			return nil, err
 		}
-		hasSpoilers, err := strconv.ParseBool(record[6])
+		hasSpoilers, err := strconv.ParseBool(record[6]) // HasSpoilers at index 6
 		if err != nil {
 			return nil, err
 		}
-		hasProfanity, err := strconv.ParseBool(record[7])
+		hasProfanity, err := strconv.ParseBool(record[7]) // HasProfanity at index 7
 		if err != nil {
 			return nil, err
 		}
 
 		// Parse the score
-		score, err := strconv.ParseFloat(record[8], 64)
+		score, err := strconv.ParseFloat(record[8], 64) // Score at index 8
 		if err != nil {
 			return nil, err
 		}
@@ -183,22 +183,23 @@ func UserReviewsReader(filepath string) ([]models.UserReview, error) {
 		review := models.UserReview{
 			MovieID:         movieID,
 			Rating:          rating,
-			Quote:           record[2], // Quote at index 2
-			ReviewID:        reviewID,  // Correct ReviewID index (3)
-			IsVerified:      isVerified,
+			Quote:           record[2],  // Quote at index 2
+			ReviewID:        reviewID,   // Keep ReviewID as a string
+			IsVerified:      isVerified, // IsVerified
 			IsSuperReviewer: isSuperReviewer,
 			HasSpoilers:     hasSpoilers,
 			HasProfanity:    hasProfanity,
-			Score:           score,
-			CreationDate:    record[9],  // Creation date at index 9
-			UserDisplayName: record[10], // User display name at index 10
-			UserRealm:       record[11], // User realm at index 11
-			UserID:          record[12], // User ID at index 12
+			Score:           score,      // Score
+			CreationDate:    record[9],  // CreationDate at index 9
+			UserDisplayName: record[10], // UserDisplayName at index 10
+			UserRealm:       record[11], // UserRealm at index 11
+			UserID:          record[12], // UserID at index 12
 		}
 		reviews = append(reviews, review)
 	}
 	return reviews, nil
 }
+
 
 func Writer(filepath string, movies []models.Movie) error {
 	file, err := os.Create(filepath)
